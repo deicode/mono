@@ -52,7 +52,8 @@ Route::post('/projects/create3', 'ProjectController@create3')->name('projects.cr
 Route::get('/projects/index4', 'ProjectController@index4')->name('projects.index4');
 Route::post('/projects/create4', 'ProjectController@create4')->name('projects.create4');
 
-Route::get('/projects/index5', 'ProjectController@index5')->name('projects.index5');
-Route::post('/projects/create5', 'ProjectController@create5')->name('projects.create5');
+// Route::get('/projects/index5', 'ProjectController@index5')->name('projects.index5');
+// Route::post('/projects/create5', 'ProjectController@create5')->name('projects.create5');
+Route::get('/projects/create5', 'ProjectController@create5')->name('projects.index5');
 
 	

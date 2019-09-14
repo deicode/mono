@@ -1,12 +1,10 @@
 <?php
-use Illuminate\Http\Request;
-use App\Http\Requests;
-namespace App\Http\Controllers;
-use Auth;
-
-use App\User;
 use App\Project;
+namespace App\Http\Controllers;
+
 use App\Projects;
+use App\User;
+use Auth;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
@@ -20,27 +18,26 @@ class ProjectController extends Controller
     {
         // dd(Auth::user());
         $user = Auth::user();
-    	return view('projects/index', compact('user') );
+        return view('projects/index', compact('user'));
     }
 
     public function index2()
     {
 
-    	return view('projects/index2', array('user' => Auth::user()) );
+        return view('projects/index2', array('user' => Auth::user()));
     }
 
     public function index3()
     {
 
-    	return view('projects/index3', array('user' => Auth::user()) );
+        return view('projects/index3', array('user' => Auth::user()));
     }
 
     public function index4()
     {
 
-    	return view('projects/index6', array('user' => Auth::user()) );
+        return view('projects/index6', array('user' => Auth::user()));
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -51,13 +48,12 @@ class ProjectController extends Controller
     {
         //
 
-
         // dd(Auth::user());
-		$user = Auth::user();
+        $user = Auth::user();
 
-		$user = User::find($user->id);
+        $user = User::find($user->id);
 
-        if($user->projects!=null){
+        if ($user->projects != null) {
             $user->projects->entite = $request->input('entite');
             $user->projects->categorie = $request->input('categorie');
             $user->projects->adresse = $request->input('adresse');
@@ -67,13 +63,12 @@ class ProjectController extends Controller
             $user->projects->descriptifentreprise = $request->input('descriptifentreprise');
             $user->projects->chiffredaffaire = $request->input('chiffredaffaire');
             $user->projects->prixremporte = $request->input('prixremporte');
-            
-     
+
             $user->save();
             $user->projects->save();
-        }else{
-            $project =  $request->all();
-            $project['user_id'] =  $user->id;
+        } else {
+            $project = $request->all();
+            $project['user_id'] = $user->id;
             Projects::create($project);
             // $user->projects->entite = $request->input('entite');
             // $user->projects->categorie = $request->input('categorie');
@@ -84,8 +79,7 @@ class ProjectController extends Controller
             // $user->projects->descriptifentreprise = $request->input('descriptifentreprise');
             // $user->projects->chiffredaffaire = $request->input('chiffredaffaire');
             // $user->projects->prixremporte = $request->input('prixremporte');
-            
-     
+
             // $user->save();
             // $user->projects->save();
         }
@@ -99,24 +93,21 @@ class ProjectController extends Controller
         // $user->projects->descriptifentreprise = $request->input('descriptifentreprise');
         // $user->projects->chiffredaffaire = $request->input('chiffredaffaire');
         // $user->projects->prixremporte = $request->input('prixremporte');
-        
- 
-		// $user->save();
-		// $user->projects->save();
+
+        // $user->save();
+        // $user->projects->save();
         return redirect()->route('projects.index2');
-    	// return view('projects.index2', array('user' => Auth::user()) );
+        // return view('projects.index2', array('user' => Auth::user()) );
 
     }
-
 
     public function create2(Request $request)
     {
         //
 
+        $user = Auth::user();
 
-		$user = Auth::user();
-
-		$user = User::find($user->id);
+        $user = User::find($user->id);
 
         // $user->projects->entite = $request->input('entite');
 
@@ -125,95 +116,119 @@ class ProjectController extends Controller
         $user->projects->fonctionoccupe = $request->input('fonctionoccupe');
         $user->projects->descriptifprojet = $request->input('descriptifprojet');
 
-        
- 
-		$user->save();
-		$user->projects->save();
+        $user->save();
+        $user->projects->save();
         return redirect()->route('projects.index3');
-    	// return view('projects.index3', array('user' => Auth::user()) );
+        // return view('projects.index3', array('user' => Auth::user()) );
 
     }
-
-
 
     public function create3(Request $request)
     {
         //
 
+        $user = Auth::user();
 
-		$user = Auth::user();
-
-		$user = User::find($user->id);
-
+        $user = User::find($user->id);
 
         // $user->projects->concurrent = $request->input('concurrent');
         $user->projects->equipe = $request->input('equipe');
 
-        
- 
-		$user->save();
-		$user->projects->save();
+        $user->save();
+        $user->projects->save();
 // die();
-return redirect()->route('projects.index4');
-    	// return view('projects.index6', array('user' => Auth::user()) );
+        return redirect()->route('projects.index4');
+        // return view('projects.index6', array('user' => Auth::user()) );
 
     }
 
-
-
     public function create4(Request $request)
     {
-        
 
-
-		$user = Auth::user();
+// dd('');
+        $user = Auth::user();
 
         $user = User::find($user->id);
-        
 
-       // dd($request->file('planfin'));
+        // dd($request->file('planfin'));
         // dd($request->file('declarationfiscale'));
 
-        
-        $file = $request->file('planfin');
+        if ($request->has('planfin')) {
+            $file = $request->file('planfin');
 
+            $destination_path = public_path() . '/files';
+            $extention = $file->getClientOriginalExtension();
 
-        $destination_path = public_path().'/files';
-        $extention = $file->getClientOriginalExtension();
+            $files = $file->getClientOriginalName();
+            $fileName = $files . '_' . time() . '.' . $extention;
+            $file->move($destination_path, $fileName);
 
+            $user->projects->planfin = $destination_path . '/' . $fileName;
 
-        $files = $file->getClientOriginalName();
-        $fileName = $files.'_'.time().'.'.$extention;
-        $file->move($destination_path ,$fileName);
+        }
 
+        if ($request->has('powerpoint')) {
+            $file = $request->file('powerpoint');
 
-		$user->save();
+            $destination_path = public_path() . '/files';
+            $extention = $file->getClientOriginalExtension();
+
+            $files = $file->getClientOriginalName();
+            $fileName = $files . '_' . time() . '.' . $extention;
+            $file->move($destination_path, $fileName);
+
+            $user->projects->powerpoint = $destination_path . '/' . $fileName;
+
+        }
+
+        if ($request->has('businessplan')) {
+            $file = $request->file('businessplan');
+
+            $destination_path = public_path() . '/files';
+            $extention = $file->getClientOriginalExtension();
+
+            $files = $file->getClientOriginalName();
+            $fileName = $files . '_' . time() . '.' . $extention;
+            $file->move($destination_path, $fileName);
+
+            $user->projects->businessplan = $destination_path . '/' . $fileName;
+
+        }
+
+        if ($request->has('declarationfiscale')) {
+            $file = $request->file('declarationfiscale');
+
+            $destination_path = public_path() . '/files';
+            $extention = $file->getClientOriginalExtension();
+
+            $files = $file->getClientOriginalName();
+            $fileName = $files . '_' . time() . '.' . $extention;
+            $file->move($destination_path, $fileName);
+
+            $user->projects->declarationfiscale = $destination_path . '/' . $fileName;
+
+        }
+
+        $user->save();
         $user->projects->save();
-
 
         // $user->projects->declarationfiscale = $request->input('declarationfiscale');
         // $user->projects->businessplan = $request->input('businessplan');
         // $user->projects->planfin = $request->input('planfin');
         // $user->projects->powerpoint = $request->input('powerpoint');
-        
- 
-		// $user->save();
+
+        // $user->save();
         // $user->projects->save();
-        
 
         return redirect()->route('projects.index5');
-    	// return view('projects.index5', array('user' => Auth::user()) );
+        // return view('projects.index5', array('user' => Auth::user()) );
 
     }
 
     public function create5()
-     {
-
-
-
-         return view('home', array('user' => Auth::user()) );
-
-     }
+    {
+        return view('home', array('user' => Auth::user()));
+    }
 
     /**
      * Store a newly created resource in storage.
